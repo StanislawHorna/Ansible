@@ -1,0 +1,5 @@
+- name: Remove SSH key
+  file:
+    path: "{{ ssh_key_temp_path }}"
+    state: absent
+  delegate_to: localhost

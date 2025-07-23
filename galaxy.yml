@@ -1,0 +1,8 @@
+namespace: stanislawhorna
+name: ansible
+repository: https://github.com/StanislawHorna/Ansible.git
+version: 1.0.0
+readme: README.md
+authors:
+  - Stanislaw Horna
+description: Ansible collection of useful roles for Home Lab Environment
