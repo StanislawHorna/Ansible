@@ -1,0 +1,12 @@
+galaxy_info:
+  role_name: install_oh_my_posh
+  author: Stanislaw Horna
+  description: Install Oh My Posh prompt theme engine and set theme from GitHub Gist
+  license: MIT
+  min_ansible_version: "2.9"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+
+dependencies: []
