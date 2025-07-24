@@ -7,7 +7,5 @@ vault_registry_cert_mount_point: "cert_secrets"
 vault_path_registry_cert: "{{ vault_registry_cert_mount_point }}/data/{{ registry_url }}"
 vault_registry_cert_field: "certificate"
 
-vault_approle_mount_point: "approle"
-
 docker_cert_dir: "/etc/docker/certs.d/{{ registry_url }}"
 cert_filename: "ca.crt"

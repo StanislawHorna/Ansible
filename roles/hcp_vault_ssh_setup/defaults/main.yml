@@ -3,8 +3,8 @@ vault_role_id: "{{ lookup('env', 'ANSIBLE_HASHI_VAULT_ROLE_ID') }}"
 vault_secret_id: "{{ lookup('env', 'ANSIBLE_HASHI_VAULT_SECRET_ID') }}"
 vault_validate_certs: "{{ lookup('env', 'ANSIBLE_HASHI_VAULT_VALIDATE_CERTS') | default(true, true) }}"
 
-vault_vm_ssh_access_key_mount_point: "{{ lookup('env', 'ANSIBLE_HASHI_VAULT_SECRET_MOUNT_POINT') }}"
-vault_vm_ssh_access_key_field: "{{ lookup('env', 'ANSIBLE_HASHI_VAULT_SECRET_FIELD') | default('private_key', true) }}"
+vault_vm_ssh_access_key_mount_point: "proxmox_vms"
+vault_vm_ssh_access_key_field: "private_key"
 vault_vm_ssh_access_key_path: "{{ inventory_hostname }}"
 
 ssh_key_temp_dir: "./tmp"
