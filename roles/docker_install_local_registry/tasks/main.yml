@@ -1,0 +1,33 @@
+- name: Ensure Docker certificate directory exists
+  file:
+    path: "{{ docker_cert_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Fetch registry certificate from Vault using hashi_vault plugin
+  set_fact:
+    docker_registry_cert: >-
+      {{
+        lookup('community.hashi_vault.hashi_vault',
+          'secret={{ vault_path_registry_cert }}:{{ vault_registry_cert_field }}',
+          engine_version=2,
+          secret_mount_point='{{ vault_registry_cert_mount_point }}',
+          auth_method='approle',
+          auth_mount='approle',
+          role_id=lookup('env', 'ANSIBLE_HASHI_VAULT_ROLE_ID'),
+          secret_id=lookup('env', 'ANSIBLE_HASHI_VAULT_SECRET_ID'),
+          url=vault_url,
+          validate_certs=vault_validate_certs
+        )
+      }}
+
+- name: Write certificate to Docker certs directory
+  copy:
+    content: "{{ docker_registry_cert }}"
+    dest: "{{ docker_cert_dir }}/{{ cert_filename }}"
+    mode: "0644"
+
+- name: Restart Docker to load new certificate
+  service:
+    name: docker
+    state: restarted

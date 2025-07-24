@@ -1,0 +1,12 @@
+vault_url: "{{ lookup('env', 'ANSIBLE_HASHI_VAULT_ADDR') | default('http://localhost:8200', true) }}"
+vault_role_id: "{{ lookup('env', 'ANSIBLE_HASHI_VAULT_ROLE_ID') }}"
+vault_secret_id: "{{ lookup('env', 'ANSIBLE_HASHI_VAULT_SECRET_ID') }}"
+vault_validate_certs: "{{ lookup('env', 'ANSIBLE_HASHI_VAULT_VALIDATE_CERTS') | default(true, true) }}"
+
+
+registry_url: "docker-hub.horna.local"
+vault_registry_cert_mount_point: "cert_secrets"
+vault_registry_cert_path: "{{ vault_registry_cert_mount_point }}/data/{{ registry_url }}"
+vault_registry_cert_field: "certificate"
+
+registry_cert_local_k3s_path: "/etc/rancher/k3s/registry.crt"

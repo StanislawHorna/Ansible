@@ -1,0 +1,53 @@
+- name: Install required pip packages for vault lookup
+  apt:
+    name: python3-hvac
+    state: present
+  become: true
+
+- name: Ensure destination directory exists
+  file:
+    path: "{{ ssh_ca_local_path | dirname }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+- name: Get SSH CA from Vault
+  set_fact:
+    ssh_ca_key: >-
+      {{
+        lookup('community.hashi_vault.hashi_vault',
+          'secret={{ vault_ssh_ca_path }}:{{ vault_ssh_ca_pub_field }}',
+          engine_version=2,
+          secret_mount_point='{{ vault_ssh_ca_mount_point }}',
+          auth_method='approle',
+          auth_mount='approle',
+          role_id=lookup('env', 'ANSIBLE_HASHI_VAULT_ROLE_ID'),
+          secret_id=lookup('env', 'ANSIBLE_HASHI_VAULT_SECRET_ID'),
+          url=vault_url,
+          validate_certs=vault_validate_certs
+        )
+      }}
+
+- name: Write SSH CA key to file
+  copy:
+    content: "{{ ssh_ca_key }}"
+    dest: "{{ ssh_ca_local_path }}"
+    owner: proxmox
+    group: proxmox
+    mode: "0644"
+  become: true
+  
+- name: Update sshd_config with TrustedUserCAKeys
+  lineinfile:
+    path: "{{ sshd_config_local_path }}"
+    state: present
+    regexp: "^TrustedUserCAKeys"
+    line: "TrustedUserCAKeys {{ ssh_ca_local_path }}"
+
+- name: Restart SSH service
+  service:
+    name: "{{ ssh_service_name }}"
+    state: restarted
+  become: true

@@ -1,0 +1,12 @@
+galaxy_info:
+  role_name: upgrade_packages
+  author: Stanislaw Horna
+  description: Simple apt update and upgrade, with conditional reboot and retry if it failed
+  license: MIT
+  min_ansible_version: "2.9"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+
+dependencies: []

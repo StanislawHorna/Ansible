@@ -1,0 +1,12 @@
+galaxy_info:
+  role_name: set_ssh_ca_cert
+  author: Stanislaw Horna
+  description: Fetch SSH root CA from HashiCorp Vault and sets it on the host to allow for login
+  license: MIT
+  min_ansible_version: "2.9"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+
+dependencies: []

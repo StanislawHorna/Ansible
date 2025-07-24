@@ -1,0 +1,52 @@
+- name: Create certificate directory
+  file:
+    path: "/etc/rancher/k3s"
+    state: directory
+    mode: "0755"
+
+- name: Fetch certificate from Vault
+  set_fact:
+    registry_cert: >-
+      {{
+        lookup('community.hashi_vault.hashi_vault',
+          'secret={{ vault_registry_cert_path }}:{{ vault_registry_cert_field }}',
+          engine_version=2,
+          secret_mount_point='{{ vault_registry_cert_mount_point }}',
+          auth_method='approle',
+          auth_mount='approle',
+          role_id=lookup('env', 'ANSIBLE_HASHI_VAULT_ROLE_ID'),
+          secret_id=lookup('env', 'ANSIBLE_HASHI_VAULT_SECRET_ID'),
+          url=vault_url,
+          validate_certs=vault_validate_certs
+        )
+      }}
+
+- name: Save certificate to node
+  copy:
+    content: "{{ registry_cert }}"
+    dest: "{{ registry_cert_local_k3s_path }}"
+    mode: "0644"
+
+- name: Configure k3s registries.yaml
+  blockinfile:
+    path: /etc/rancher/k3s/registries.yaml
+    block: |
+      mirrors:
+        "{{ registry_url }}":
+          endpoint:
+            - "https://{{ registry_url }}"
+      configs:
+        "{{ registry_url }}":
+          tls:
+            ca_file: "{{ registry_cert_local_k3s_path }}"
+    create: yes
+  register: registry_config
+
+- name: Reboot the server
+  ansible.builtin.reboot:
+    msg: "Reboot initiated by Ansible"
+    connect_timeout: 5
+    reboot_timeout: 600
+    pre_reboot_delay: 0
+    post_reboot_delay: 30
+  when: registry_config.changed

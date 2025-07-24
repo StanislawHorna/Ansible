@@ -1,0 +1,13 @@
+vault_url: "{{ lookup('env', 'ANSIBLE_HASHI_VAULT_ADDR') | default('http://localhost:8200', true) }}"
+vault_role_id: "{{ lookup('env', 'ANSIBLE_HASHI_VAULT_ROLE_ID') }}"
+vault_secret_id: "{{ lookup('env', 'ANSIBLE_HASHI_VAULT_SECRET_ID') }}"
+vault_validate_certs: "{{ lookup('env', 'ANSIBLE_HASHI_VAULT_VALIDATE_CERTS') | default(true, true) }}"
+
+vault_ssh_ca_mount_point: "ssh"
+vault_ssh_ca_pub_field: "public_key"
+vault_ssh_ca_path: "ssh/config/ca"
+
+
+ssh_ca_local_path: "/etc/ssh/trusted-user-ca-keys.pem"
+sshd_config_local_path: "/etc/ssh/sshd_config"
+ssh_service_name: "ssh"

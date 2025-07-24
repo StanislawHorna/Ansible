@@ -1,0 +1,10 @@
+- name: Install git
+  become: true
+  ansible.builtin.apt:
+    name: git-all
+    state: present
+
+- community.general.homebrew:
+    name: gh
+    state: present
+    update_homebrew: true

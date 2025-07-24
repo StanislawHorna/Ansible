@@ -1,0 +1,12 @@
+galaxy_info:
+  role_name: disable_swap_memory
+  author: Stanislaw Horna
+  description: Disables swap memory on Ubuntu machine
+  license: MIT
+  min_ansible_version: "2.9"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+
+dependencies: []

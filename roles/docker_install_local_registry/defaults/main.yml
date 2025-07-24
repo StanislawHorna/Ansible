@@ -1,0 +1,13 @@
+vault_url: "{{ lookup('env', 'ANSIBLE_HASHI_VAULT_ADDR') | default('http://localhost:8200', true) }}"
+vault_role_id: "{{ lookup('env', 'ANSIBLE_HASHI_VAULT_ROLE_ID') }}"
+vault_secret_id: "{{ lookup('env', 'ANSIBLE_HASHI_VAULT_SECRET_ID') }}"
+
+registry_url: "docker-hub.horna.local"
+vault_registry_cert_mount_point: "cert_secrets"
+vault_path_registry_cert: "{{ vault_registry_cert_mount_point }}/data/{{ registry_url }}"
+vault_registry_cert_field: "certificate"
+
+vault_approle_mount_point: "approle"
+
+docker_cert_dir: "/etc/docker/certs.d/{{ registry_url }}"
+cert_filename: "ca.crt"
