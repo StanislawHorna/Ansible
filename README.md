@@ -1,7 +1,7 @@
 # Ansible Collection - stanislawhorna.ansible
 
-This repository contains Ansible roles and playbooks for automating various tasks,
-such as setting up infrastructure, installing software, and configuring systems.
+Modular Ansible roles designed to automate the setup, configuration,
+and management of internal Home Lab systems
 
 ## Getting Started
 
