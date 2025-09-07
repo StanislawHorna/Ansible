@@ -1,5 +1,12 @@
+name      = "{{ inventory_hostname }}"
 data_dir  = "/opt/nomad"
 bind_addr = "0.0.0.0"
+
+advertise {
+  http = "{{ hostvars[inventory_hostname].ansible_host }}"
+  rpc  = "{{ hostvars[inventory_hostname].ansible_host }}"
+  serf = "{{ hostvars[inventory_hostname].ansible_host }}"
+}
 
 server {
   enabled          = true
