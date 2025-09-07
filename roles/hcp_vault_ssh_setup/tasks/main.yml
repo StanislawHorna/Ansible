@@ -27,7 +27,7 @@
   copy:
     content: "{{ ssh_private_key }}"
     dest: "{{ ssh_key_temp_path }}"
-    mode: "0644"
+    mode: "0600"
   delegate_to: localhost
 
 - name: Set ansible_ssh_private_key_file for connection
