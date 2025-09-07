@@ -29,7 +29,9 @@
   file:
     path: "{{ item }}"
     state: directory
-    mode: 0744
+    mode: 0700
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
   loop:
     - "{{consul_config_dir}}"
     - "{{consul_data_dir}}"
@@ -39,6 +41,8 @@
     src: consul.hcl.j2
     dest: /etc/consul.d/consul.hcl
     mode: 0644
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
   notify: restart consul
 
 - name: Create systemd unit
@@ -53,4 +57,3 @@
     name: consul
     enabled: yes
     state: started
-
