@@ -1,0 +1,27 @@
+data_dir  = "/opt/nomad"
+bind_addr = "0.0.0.0"
+
+server {
+  enabled          = true
+  bootstrap_expect = {{ cluster_size }}
+}
+
+client {
+  enabled           = true
+  network_interface = "eth0"
+  options = {
+    "driver.raw_exec.enable" = "1"
+  }
+}
+
+plugin "docker" {
+  config {
+    volumes {
+      enabled = true
+    }
+  }
+}
+
+consul {
+  address = "127.0.0.1:8500"
+}

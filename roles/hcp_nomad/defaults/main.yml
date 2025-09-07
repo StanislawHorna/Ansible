@@ -1,0 +1,7 @@
+consul_version: "1.21.4"
+consul_user: "consul"
+consul_group: "consul"
+consul_install_dir: "/usr/local/bin"
+consul_config_dir: "/etc/consul.d"
+consul_data_dir: "/opt/consul"
+cluster_size: 3

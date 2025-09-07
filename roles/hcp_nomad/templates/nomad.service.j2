@@ -1,0 +1,15 @@
+[Unit]
+Description=Nomad
+Documentation=https://www.nomadproject.io/docs/
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User={{ nomad_user }}
+Group={{ nomad_group }}
+ExecStart={{ nomad_install_dir }}/nomad agent -bind=0.0.0.0 -data-dir={{ nomad_data_dir }} -config=/etc/nomad.d
+Restart=on-failure
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
