@@ -4,6 +4,13 @@ bind_addr = "0.0.0.0"
 server {
   enabled          = true
   bootstrap_expect = {{ cluster_size }}
+  server_join {
+    retry_join = [
+{%- for host in groups[nomad_inventory_group_name] -%}
+        "{{ hostvars[host]['ansible_host'] | default(host) }}"{%- if not loop.last -%},{%- endif %}
+{%- endfor -%}
+    ]
+  }
 }
 
 client {
