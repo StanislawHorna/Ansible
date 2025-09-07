@@ -5,7 +5,11 @@ server     = true
 bootstrap_expect = {{ cluster_size }}
 bind_addr  = "{{ hostvars[inventory_hostname].ansible_host }}"
 client_addr = "0.0.0.0"
-
+retry_join = [
+{%- for host in groups[consul_inventory_group_name] -%}
+        "{{ hostvars[host]['ansible_host'] | default(host) }}"{%- if not loop.last -%},{%- endif %}
+{%- endfor -%}
+]
 ui_config {
   enabled = true
 }

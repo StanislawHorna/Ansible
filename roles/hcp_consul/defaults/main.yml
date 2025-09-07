@@ -4,4 +4,5 @@ consul_group: "consul"
 consul_install_dir: "/usr/local/bin"
 consul_config_dir: "/etc/consul.d"
 consul_data_dir: "/opt/consul"
+consul_inventory_group_name: "nomad"
 cluster_size: 3
