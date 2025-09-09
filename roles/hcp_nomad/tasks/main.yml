@@ -7,6 +7,13 @@
     state: present
     update_cache: yes
 
+- name: Create Nomad user and group
+  user:
+    name: "{{ nomad_user }}"
+    shell: /bin/false
+    system: yes
+    create_home: no
+
 - name: Download Nomad
   get_url:
     url: "https://releases.hashicorp.com/nomad/{{ nomad_version }}/nomad_{{ nomad_version }}_linux_amd64.zip"
@@ -18,12 +25,24 @@
     dest: "/usr/local/bin"
     remote_src: yes
 
-- name: Create Nomad user and group
-  user:
-    name: "{{ nomad_user }}"
-    shell: /bin/false
-    system: yes
-    create_home: no
+- name: Download CNI plugins 
+  get_url:
+    url: "https://github.com/containernetworking/plugins/releases/download/v{{ nomad_cni_plugins_version }}/cni-plugins-linux-amd64-v{{ nomad_cni_plugins_version }}.tgz"
+    dest: "/tmp/cni-plugins-{{ nomad_cni_plugins_version }}.tgz"
+    mode: "0644"
+
+- name: Unzip CNI plugins
+  unarchive:
+    src: "/tmp/cni-plugins-{{ nomad_cni_plugins_version }}.tgz"
+    dest: "{{nomad_cni_plugins_dir}}"
+    remote_src: yes
+
+- name: Ensure CNI plugins are executable
+  file:
+    path: "{{nomad_cni_plugins_dir}}"
+    state: directory
+    mode: "0755"
+    recurse: yes
 
 - name: Add user to the Docker group
   user:
@@ -42,11 +61,24 @@
     - "{{ nomad_config_dir }}"
     - "{{ nomad_data_dir }}"
     - "{{ nomad_alloc_dir }}"
+    - "{{ nomad_cni_plugins_dir }}"
+    - "{{ nomad_cni_config_dir }}"
 
 - name: Create nomad config
   template:
     src: nomad.hcl.j2
     dest: "{{nomad_config_dir}}/nomad.hcl"
+    owner: "{{ nomad_user }}"
+    group: "{{ nomad_group }}"
+    mode: 0644
+  notify: restart nomad
+
+- name: Create bridge network
+  template:
+    src: 10-bridge.conf.j2
+    dest: "{{nomad_cni_config_dir}}/10-bridge.conf"
+    owner: "{{ nomad_user }}"
+    group: "{{ nomad_group }}"
     mode: 0644
   notify: restart nomad
 

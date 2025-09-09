@@ -1,13 +1,13 @@
 [Unit]
 Description=Nomad
 Documentation=https://www.nomadproject.io/docs/
-Wants=network-online.target
-After=network-online.target
+Wants=consul.service
+After=consul.service
 
 [Service]
-User={{ nomad_user }}
-Group={{ nomad_group }}
-ExecStart={{ nomad_install_dir }}/nomad agent -bind=0.0.0.0 -data-dir={{ nomad_data_dir }} -config=/etc/nomad.d
+User=root
+Group=root
+ExecStart={{ nomad_install_dir }}/nomad agent -config=/etc/nomad.d
 Restart=on-failure
 LimitNOFILE=65536
 

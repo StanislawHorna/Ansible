@@ -1,5 +1,5 @@
 name      = "{{ inventory_hostname }}"
-data_dir  = "/opt/nomad"
+data_dir  = "{{ nomad_data_dir }}"
 bind_addr = "0.0.0.0"
 
 advertise {
@@ -8,34 +8,74 @@ advertise {
   serf = "{{ hostvars[inventory_hostname].ansible_host }}"
 }
 
+{% if inventory_hostname in groups[inventory_server_group] %}
 server {
   enabled          = true
-  bootstrap_expect = {{ cluster_size }}
+  bootstrap_expect = {{ groups[inventory_server_group] | length }}
   server_join {
     retry_join = [
-{%- for host in groups[nomad_inventory_group_name] -%}
-        "{{ hostvars[host]['ansible_host'] | default(host) }}"{%- if not loop.last -%},{%- endif %}
+{%- for host in groups[inventory_server_group] -%}
+        "{{ hostvars[host]['ansible_host'] | default(host) }}:4648"{%- if not loop.last -%},{%- endif %}
 {%- endfor -%}
     ]
+  retry_max      = 4
+  retry_interval = "15s"
   }
 }
 
 client {
-  enabled           = true
-  network_interface = "eth0"
-  options = {
-    "driver.raw_exec.enable" = "1"
-  }
+    enabled = false
 }
 
+ui {
+    enabled = true
+}
+{% endif %}
+
+{% if inventory_hostname in groups[inventory_client_group] %}
+client {
+  enabled           = true
+  network_interface = "eth0"
+    servers = [
+{%- for host in groups[inventory_server_group] -%}
+      "{{ hostvars[host]['ansible_host'] | default(host) }}:4647"{%- if not loop.last -%},{%- endif -%}
+{%- endfor -%}
+  ]
+  options = {
+      "driver.raw_exec.enable" = "1"
+      "docker.privileged.enabled" = "true"
+  }
+  meta {
+      "docker" = "true"
+  }
+}
 plugin "docker" {
   config {
+    allow_privileged = true
     volumes {
       enabled = true
     }
   }
 }
+plugin "cni" {
+  config {
+    bin_dir  = "{{nomad_cni_plugins_dir}}"
+    conf_dir = "{{nomad_cni_config_dir}}"
+  }
+}
+
+server {
+    enabled = false
+}
+
+ui {
+    enabled = false
+}
+{% endif %}
+
 
 consul {
   address = "127.0.0.1:8500"
+  client_auto_join = true
+  server_auto_join = true
 }

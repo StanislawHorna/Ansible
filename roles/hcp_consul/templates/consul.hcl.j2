@@ -1,20 +1,40 @@
+node_name = "{{ inventory_hostname }}"
 datacenter = "dc1"
 data_dir   = "/opt/consul"
 log_level  = "INFO"
-server     = true
-bootstrap_expect = {{ cluster_size }}
+
 bind_addr  = "{{ hostvars[inventory_hostname].ansible_host }}"
+advertise_addr = "{{ hostvars[inventory_hostname].ansible_host }}"
 client_addr = "0.0.0.0"
+
 retry_join = [
-{%- for host in groups[consul_inventory_group_name] -%}
+{%- set all_nomad_hosts = groups['nomad_server'] | union(groups['nomad_client']) -%}
+{%- for host in all_nomad_hosts -%}
         "{{ hostvars[host]['ansible_host'] | default(host) }}"{%- if not loop.last -%},{%- endif %}
 {%- endfor -%}
 ]
-ui_config {
-  enabled = true
-}
 
 ports {
   dns = 8600
   http = 8500
+  grpc = 8502
 }
+connect {
+    enabled = true
+}
+
+{% if inventory_hostname in groups[inventory_server_group] %}
+server     = true
+bootstrap_expect = {{ groups[inventory_server_group] | length }}
+
+ui_config {
+  enabled = true
+}
+{% endif %}
+
+{% if inventory_hostname in groups[inventory_client_group] %}
+server = false
+ui_config {
+  enabled = false
+}
+{% endif %}
