@@ -1,0 +1,12 @@
+galaxy_info:
+  role_name: k3s_upload_context_to_vault
+  author: Stanislaw Horna
+  description: Uploads K3s cluster config to HCP Vault
+  license: MIT
+  min_ansible_version: "2.9"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+
+dependencies: []
