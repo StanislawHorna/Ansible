@@ -11,11 +11,11 @@
     ssh_private_key: >-
       {{
         lookup('community.hashi_vault.hashi_vault',
-          'secret={{ vault_vm_ssh_access_key_path }}:{{ vault_vm_ssh_access_key_field }}',
+          secret=vault_vm_ssh_access_key_path,
+          key=vault_vm_ssh_access_key_field,
+          mount_point=vault_vm_ssh_access_key_mount_point,
           engine_version=2,
-          secret_mount_point='{{ vault_vm_ssh_access_key_mount_point }}',
           auth_method='approle',
-          auth_mount='approle',
           role_id=lookup('env', 'ANSIBLE_HASHI_VAULT_ROLE_ID'),
           secret_id=lookup('env', 'ANSIBLE_HASHI_VAULT_SECRET_ID'),
           url=vault_url,
