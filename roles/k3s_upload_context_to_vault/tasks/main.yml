@@ -1,6 +1,12 @@
 - name: Set cluster name based on IP
   ansible.builtin.set_fact:
-    vault_cluster_name: "{{ vault_cluster_prefix }}-{{ ansible_default_ipv4.address | regex_replace('\\.', '-') }}"
+    vault_cluster_name: >-
+      {{ vault_cluster_prefix }}-{{ 
+        group_names 
+        | select('search', '^k3s_cluster_') 
+        | first 
+        | regex_replace('^k3s_cluster_', '') 
+      }}
 
 - name: Debug cluster name
   ansible.builtin.debug:
