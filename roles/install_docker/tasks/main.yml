@@ -7,19 +7,23 @@
       - software-properties-common
       - virtualenv
     state: latest
+  register: required_packages
 
 - name: Add Docker GPG apt Key
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
     state: present
+  register: docker_apt_key
 
 - name: Add Docker Repository
   apt_repository:
     repo: deb https://download.docker.com/linux/ubuntu focal stable
     state: present
+  register: docker_repository
 
 - name: Reboot host
   reboot:
+  when: required_packages.changed or docker_apt_key.changed or docker_repository.changed
 
 - name: Update apt and install Docker packages
   apt:
